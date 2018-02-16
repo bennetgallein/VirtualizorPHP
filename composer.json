@@ -1,0 +1,20 @@
+{
+    "name": "bennetgallein/virtualizor-php",
+    "description": "A Wrapper for the Virtualizor API",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bennet Gallein",
+            "email": "bennet@intranetproject.net"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Virtualizor\\":"api/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.5"
+    }
+}
