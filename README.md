@@ -8,3 +8,15 @@ Install this library via composer is pretty easy.
 composer require bennetgallein/virtualizor-php
 ```
 And then you can get started with your project.
+
+## Object Description:
+### VirtualServer:
+Create a new VirtualServer Object by using the following:
+```
+$virt = new \Virtualizor\Virtualizor("ip", "key", "pass", "port");
+$virtualobject = $virt->vps();
+```
+Add Attributes and set the Act Method, then execute the query.
+```
+$example = $virt->vps()->setAct(\Virtualizor\Objects\VirtualServer::REBUILD)->setHostname("hostname_1")->exec();
+```

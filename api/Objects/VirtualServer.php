@@ -21,6 +21,22 @@ class VirtualServer {
 
     private $base;
 
+    const CREATE = 'addvs';
+    const DELETE = 'vs';
+    const EDIT = 'editvs';
+    const MANAGE = 'managevps';
+    const START = 'vs';
+    const STOP = 'vs';
+    const RESTART = 'vs';
+    const POWEROFF = 'vs';
+    const SUSPEND = 'vs';
+    const UNSUSPEND = 'vs';
+    const NETWORK_SUSPEND = 'vs';
+    const NETWORK_UNSUSPEND = 'vs';
+    const REBUILD = 'rebuild';
+    const MIGRATE = 'migrate';
+    const CLONEIT = 'clone';
+
     public function __construct($baseObject) {
         $this->base = $baseObject;
         return $this;
@@ -29,13 +45,60 @@ class VirtualServer {
     public function exec() {
         $post = array();
         $reflect = new \ReflectionClass($this);
-        $props   = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
+        $props = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
 
         foreach ($props as $prop) {
             $prop->setAccessible(true);
-            $post[$prop->getName()] =$prop->getValue($this);
+            $post[$prop->getName()] = $prop->getValue($this);
         }
-        $this->base->__request("index.php?act=" . $this->act, $post);
+        switch ($this->act) {
+            case VirtualServer::CREATE:
+                $return = $this->base->__request("index.php?act=" . $this->act, $post);
+                break;
+            case VirtualServer::DELETE:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&delete=" . $this->uid, $post);
+                break;
+            case VirtualServer::EDIT:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&delete=" . $this->uid, $post);
+                break;
+            case VirtualServer::MANAGE:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&vpsid=" . $this->uid, $post);
+                break;
+            case VirtualServer::START:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&action=start&vpsid=" . $this->uid, $post);
+                break;
+            case VirtualServer::STOP:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&action=stop&vpsid=" . $this->uid, $post);
+                break;
+            case VirtualServer::RESTART:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&action=restart&vpsid=" . $this->uid, $post);
+                break;
+            case VirtualServer::POWEROFF:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&action=poweroff&vpsid=" . $this->uid, $post);
+                break;
+            case VirtualServer::SUSPEND:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&suspend=" . $this->uid, $post);
+                break;
+            case VirtualServer::UNSUSPEND:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&unsuspend=" . $this->uid, $post);
+                break;
+            case VirtualServer::NETWORK_SUSPEND:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&suspend_net=" . $this->uid, $post);
+                break;
+            case VirtualServer::NETWORK_UNSUSPEND:
+                $return = $this->base->__request("index.php?act=" . $this->act . "&unsuspend_net=" . $this->uid, $post);
+                break;
+            case VirtualServer::REBUILD:
+                $return = $this->base->__request("index.php?act=" . $this->act, $post);
+                break;
+            case VirtualServer::MIGRATE:
+                $return = $this->base->__request("index.php?act=" . $this->act, $post);
+                break;
+            case VirtualServer::CLONEIT:
+                $return = $this->base->__request("index.php?act=" . $this->act, $post);
+                break;
+        }
+        return $return;
     }
 
     /**
