@@ -12,11 +12,11 @@ And then you can get started with your project.
 ## Object Description:
 ### VirtualServer:
 Create a new VirtualServer Object by using the following:
-```
+```php
 $virt = new \Virtualizor\Virtualizor("ip", "key", "pass", "port");
 $virtualobject = $virt->vps();
 ```
 Add Attributes and set the Act Method, then execute the query.
-```
+```php
 $example = $virt->vps()->setAct(\Virtualizor\Objects\VirtualServer::REBUILD)->setHostname("hostname_1")->exec();
 ```

@@ -57,6 +57,8 @@ class Virtualizor {
         $output = curl_exec($ch);
 
         curl_close($ch);
+        //echo "http://" . Virtualizor::getIp() . Virtualizor::getPort() . $url . "<br>";
+        //echo $postData;
         return $output;
     }
 

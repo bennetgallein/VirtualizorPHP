@@ -8,7 +8,6 @@
 
 namespace Virtualizor\Objects;
 
-use Virtualizor\Virtualizor;
 
 /**
  * Class VirtualServer
@@ -17,8 +16,8 @@ use Virtualizor\Virtualizor;
  */
 class VirtualServer {
 
-    public $act, $rootpass, $virt, $plid, $hostname, $space, $ram, $bandwidth, $network_speed, $cores, $mgs, $priority, $cpu, $burst, $cpu_percent, $osid, $iso, $stid, $vnc, $vncpass, $swapram, $shadow, $hvm, $boot, $ips, $num_ips6, $numips6_subnet, $noemail, $add_user, $user_email, $user_pass, $add_ip, $vnc_keymap, $cpunit, $uid, $dnsplan_id, $addvs, $band_suspend, $osreinstall_limit, $tuntap, $vif_type, $nic_type, $ips_int, $virio;
-
+    public $rootpass, $virt, $plid, $hostname, $space, $ram, $bandwidth, $network_speed, $cores, $mgs, $priority, $cpu, $burst, $cpu_percent, $osid, $iso, $stid, $vnc, $vncpass, $swapram, $shadow, $hvm, $boot, $ips, $num_ips6, $numips6_subnet, $noemail, $add_user, $user_email, $user_pass, $add_ip, $vnc_keymap, $cpunit, $uid, $dnsplan_id, $addvs, $band_suspend, $osreinstall_limit, $tuntap, $vif_type, $nic_type, $ips_int, $virio;
+    private $act;
     private $base;
 
     const CREATE = 'addvs';
@@ -49,7 +48,9 @@ class VirtualServer {
 
         foreach ($props as $prop) {
             $prop->setAccessible(true);
-            $post[$prop->getName()] = $prop->getValue($this);
+            if ($prop->getValue($this) !== null) {
+                $post[$prop->getName()] = $prop->getValue($this);
+            }
         }
         switch ($this->act) {
             case VirtualServer::CREATE:
