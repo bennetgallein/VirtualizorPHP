@@ -11,44 +11,78 @@ namespace Virtualizor;
 
 use Virtualizor\Objects\VirtualServer;
 
-class Virtualizor {
+class Virtualizor
+{
 
     public $key;
     public $pass;
     public $ip;
     public $port;
 
-    public function __construct($ip, $key, $pass, $port = ':80/') {
+    private $apik;
+
+    public function __construct($ip, $key, $pass, $port = '4085')
+    {
         $this->ip = $ip;
         $this->key = $key;
         $this->pass = $pass;
         $this->port = $port;
     }
 
-    public function getKey() {
+    private function getAPIK($key, $pass)
+    {
+        return $key . md5($pass . $key);
+    }
+
+    private function generateRandStr($length)
+    {
+        $randstr = "";
+        for ($i = 0; $i < $length; $i++) {
+            $randnum = mt_rand(0, 61);
+            if ($randnum < 10) {
+                $randstr .= chr($randnum + 48);
+            } elseif ($randnum < 36) {
+                $randstr .= chr($randnum + 55);
+            } else {
+                $randstr .= chr($randnum + 61);
+            }
+        }
+        return strtolower($randstr);
+    }
+
+
+    public function getKey()
+    {
         return $this->key;
     }
-    public function getPass() {
+
+    public function getPass()
+    {
         return $this->pass;
     }
-    public function getIp() {
+
+    public function getIp()
+    {
         return $this->ip;
     }
-    public function getPort() {
+
+    public function getPort()
+    {
         return $this->port;
     }
 
-    public function __request($url, $post) {
-        $postData = '';
+    public function __request($path, $post, $cookies = array())
+    {
+        /*$postData = '';
         //create name value pairs seperated by &
         foreach ($post as $k => $v) {
             $postData .= $k . '=' . $v . '&';
         }
         $postData = rtrim($postData, '&');
-
+*/
         $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, "http://" . Virtualizor::getIp() . Virtualizor::getPort() . $url);
+/*
+        curl_setopt($ch, CURLOPT_URL, "https://" . Virtualizor::getIp() . Virtualizor::getPort() . $url . "&api=json&apikey=" . rawurldecode($this->apik));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_POST, count($postData));
@@ -56,13 +90,51 @@ class Virtualizor {
 
         $output = curl_exec($ch);
 
+        curl_close($ch);*/
+
+        $key = $this->generateRandStr(8);
+        $apikey = $this->getAPIK($key, $this->pass);
+
+        $url = 'https://'.$this->ip.':'. $this->port .'/'. $path;
+        $url .= (strstr($url, '?') ? '' : '?');
+        $url .= '&api=json&apikey='.rawurlencode($apikey);
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        // Time OUT
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+
+        // Turn off the server and peer verification (TrustManager Concept).
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+
+        // UserAgent
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Softaculous');
+
+        // Cookies
+        if(!empty($cookies)){
+            curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+            curl_setopt($ch, CURLOPT_COOKIE, http_build_query($cookies, '', '; '));
+        }
+
+        if(!empty($post)){
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+        }
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        // Get response from the server.
+        $resp = curl_exec($ch);
         curl_close($ch);
-        //echo "http://" . Virtualizor::getIp() . Virtualizor::getPort() . $url . "<br>";
+
+        echo $url . "<br>";
         //echo $postData;
-        return $output;
+        return $resp;
     }
 
-    public function vps() {
+    public function vps()
+    {
         return new VirtualServer($this);
     }
 }
