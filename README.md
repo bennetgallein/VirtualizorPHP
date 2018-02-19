@@ -10,6 +10,14 @@ composer require bennetgallein/virtualizor-php
 And then you can get started with your project.
 
 ## Object Description:
+### ServerInfo
+
+Get some information about the master
+```php
+$virt = new \Virtualizor\Virtualizor("ip", "key", "pass", "port");
+$info = json_decode($virt->serverInfo());
+```
+
 ### VirtualServer:
 Create a new VirtualServer Object by using the following:
 ```php
