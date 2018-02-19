@@ -8,7 +8,7 @@
 
 namespace Virtualizor;
 
-
+use Virtualizor\Objects\IPPool;
 use Virtualizor\Objects\VirtualServer;
 
 class Virtualizor {
@@ -63,7 +63,7 @@ class Virtualizor {
         return $this->port;
     }
 
-    public function __request($path, $post, $cookies = array()) {
+    public function __request($path, $post = array(), $cookies = array()) {
 
         $ch = curl_init();
 
@@ -103,16 +103,19 @@ class Virtualizor {
         $resp = curl_exec($ch);
         curl_close($ch);
 
-        echo $url . "<br>";
+        //echo $url . "<br>";
         //echo $postData;
         return $resp;
     }
 
     public function serverInfo() {
-        return $this->__request("index.php?act=" . $this->act, $post);
+        return $this->__request("index.php?act=" . $this->act);
     }
 
     public function vps() {
         return new VirtualServer($this);
+    }
+    public function ippool() {
+        return new IPPool($this);
     }
 }
