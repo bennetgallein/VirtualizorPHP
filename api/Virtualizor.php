@@ -118,4 +118,7 @@ class Virtualizor {
     public function ippool() {
         return new IPPool($this);
     }
+    public function ostemplates() {
+        return new OSTemplates($this);
+    }
 }
